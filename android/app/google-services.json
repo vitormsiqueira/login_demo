@@ -1,0 +1,32 @@
+{
+    "project_info": {
+        "project_number": "326308438971",
+        "firebase_url": "https://test-auth-db49.firebaseio.com",
+        "project_id": "test-auth-db49",
+        "storage_bucket": "test-auth-db49.appspot.com"
+    },
+    "client": [{
+        "client_info": {
+            "mobilesdk_app_id": "1:326308438971:android:96bbf12384e552ee1c9a9e",
+            "android_client_info": {
+                "package_name": "com.flutter.login_demo"
+            }
+        },
+        "oauth_client": [{
+            "client_id": "326308438971-p6i3aem3sf3lmsq2dp5h853r4gr8dnkh.apps.googleusercontent.com",
+            "client_type": 3
+        }],
+        "api_key": [{
+            "current_key": "AIzaSyBJyt6_11zrZkUD9c3cc9kq8NyFIqSUYfM"
+        }],
+        "services": {
+            "appinvite_service": {
+                "other_platform_oauth_client": [{
+                    "client_id": "326308438971-p6i3aem3sf3lmsq2dp5h853r4gr8dnkh.apps.googleusercontent.com",
+                    "client_type": 3
+                }]
+            }
+        }
+    }],
+    "configuration_version": "1"
+}
