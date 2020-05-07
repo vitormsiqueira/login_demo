@@ -17,19 +17,21 @@ class Auth implements BaseAuth{
   // 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  @override
   Future<String> signInWithEmailAndPassword(String email, String password) async{
     FirebaseUser user = (await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password)).user;
-    return user.uid;
+    return user != null ? user.uid : null;
   }
 
+  @override
   Future<String> createUserWithEmailAndPassword(String email, String password) async{
     FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).user;
-    return user.uid;
+    return user != null ? user.uid : null;
   }
 
-  Future<String> currentUser() async{
+  Future<String> currentUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
-    return user.uid;
+    return user != null ? user.uid : null;
   }
 
   Future<void> signedOut() async{

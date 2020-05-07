@@ -1,69 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'authentication.dart';
+import 'package:login_demo/authentication.dart';
+import 'package:login_demo/auth_provider.dart';
+
+class EmailFieldValidator {
+  static String validate(String value) {
+    return value.isEmpty ? 'Email can\'t be empty' : null;
+  }
+}
+
+class PasswordFieldValidator {
+  static String validate(String value) {
+    return value.isEmpty ? 'Password can\'t be empty' : null;
+  }
+}
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.onSignedIn});
-  final BaseAuth auth;
+  const LoginPage({this.onSignedIn});
   final VoidCallback onSignedIn;
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<StatefulWidget> createState() => _LoginPageState();
 }
 
-enum FormType{
+enum FormType {
   login,
   register,
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-  final formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   String _email;
   String _password;
   FormType _formType = FormType.login;
 
-  bool validateAndSave(){
-    final form = formKey.currentState;
-    if (form.validate()){
-      form.save(); // aqui salvamos os valores que recebemos no form
-      print("Form is valid. Email: $_email, password: $_password");
+  bool validateAndSave() {
+    final FormState form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
       return true;
-    } else {
-      print("Form is invalid. Email: $_email, password: $_password");
-      return false;
     }
+    return false;
   }
 
-  void validateAndSubmit() async {
-    if (validateAndSave()){
+  Future<void> validateAndSubmit() async {
+    if (validateAndSave()) {
       try {
-        if (_formType == FormType.login){
-          String userId = (await widget.auth.signInWithEmailAndPassword(_email, _password));
-          // FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)).user;
-          print('Sign in: $userId');     
+        final BaseAuth auth = AuthProvider.of(context).auth;
+        if (_formType == FormType.login) {
+          final String userId = await auth.signInWithEmailAndPassword(_email, _password);
+          print('Signed in: $userId');
         } else {
-          String userId = (await widget.auth.createUserWithEmailAndPassword(_email, _password));
+          final String userId = await auth.createUserWithEmailAndPassword(_email, _password);
           print('Registered user: $userId');
         }
         widget.onSignedIn();
       } catch (e) {
-        print('error: $e');
+        print('Error: $e');
       }
-
     }
   }
 
-  void moveToRegister(){
-    formKey.currentState.reset(); // this function reset the values in textfilds
+  void moveToRegister() {
+    formKey.currentState.reset();
     setState(() {
       _formType = FormType.register;
     });
   }
 
-  void moveToLogin(){
-    formKey.currentState.reset(); // this function reset the values in textfilds
+  void moveToLogin() {
+    formKey.currentState.reset();
     setState(() {
       _formType = FormType.login;
     });
@@ -73,13 +79,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Flutter Login Demo"),
+        title: Text('Flutter login demo'),
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: buildInputs() + buildSubmitButtons(),
           ),
@@ -88,69 +95,48 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  List<Widget> buildInputs(){
-    return [
+  List<Widget> buildInputs() {
+    return <Widget>[
       TextFormField(
+        key: Key('email'),
         decoration: InputDecoration(labelText: 'Email'),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value,
+        validator: EmailFieldValidator.validate,
+        onSaved: (String value) => _email = value,
       ),
       TextFormField(
+        key: Key('password'),
         decoration: InputDecoration(labelText: 'Password'),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => _password = value,
         obscureText: true,
+        validator: PasswordFieldValidator.validate,
+        onSaved: (String value) => _password = value,
       ),
     ];
   }
 
-  List<Widget> buildSubmitButtons(){
-    if (_formType == FormType.login){
-      return [
-        RaisedButton( 
-          child: Text(
-            "Login", 
-            style: 
-            TextStyle(
-              fontSize: 20.0
-            ),
-          ),
+  List<Widget> buildSubmitButtons() {
+    if (_formType == FormType.login) {
+      return <Widget>[
+        RaisedButton(
+          key: Key('signIn'),
+          child: Text('Login', style: TextStyle(fontSize: 20.0)),
           onPressed: validateAndSubmit,
         ),
         FlatButton(
-          child: Text("Create an account", 
-            style: TextStyle(
-              fontSize: 22.0,
-            ),
-          ),
+          child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
           onPressed: moveToRegister,
         ),
       ];
     } else {
-      return [
-        TextFormField(
-          decoration: InputDecoration(labelText: 'Name'),
-        ),
-        RaisedButton( 
-          child: Text(
-            "Create an account", 
-            style: 
-            TextStyle(
-              fontSize: 20.0
-            ),
-          ),
+      return <Widget>[
+        RaisedButton(
+          child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
           onPressed: validateAndSubmit,
         ),
         FlatButton(
-          child: Text("Have an account? Login", 
-            style: TextStyle(
-              fontSize: 22.0,
-            ),
-          ),
+          child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
           onPressed: moveToLogin,
         ),
       ];
     }
   }
-
 }
