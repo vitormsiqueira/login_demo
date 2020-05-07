@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'authentication.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth});
+  LoginPage({this.auth, this.onSigned});
   final BaseAuth auth;
+  final VoidCallback onSigned;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -46,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           String userId = (await widget.auth.createUserWithEmailAndPassword(_email, _password));
           print('Registered user: $userId');
         }
+        widget.onSigned();
       } catch (e) {
         print('error: $e');
       }
