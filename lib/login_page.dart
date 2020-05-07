@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'authentication.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.onSigned});
+  LoginPage({this.auth, this.onSignedIn});
   final BaseAuth auth;
-  final VoidCallback onSigned;
+  final VoidCallback onSignedIn;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       print("Form is valid. Email: $_email, password: $_password");
       return true;
     } else {
-      print("Form is invalid. Email: $_email, password: 9$_password");
+      print("Form is invalid. Email: $_email, password: $_password");
       return false;
     }
   }
@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           String userId = (await widget.auth.createUserWithEmailAndPassword(_email, _password));
           print('Registered user: $userId');
         }
-        widget.onSigned();
+        widget.onSignedIn();
       } catch (e) {
         print('error: $e');
       }
